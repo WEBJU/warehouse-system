@@ -1,7 +1,7 @@
     <!-- Footer -->
     <footer class="footer bg-dark">
       <div class="container">
-        <p class="m-0 text-center text-white">Copyright &copy; Nova Inventory System <?php echo date('Y'); ?></p>
+        <p class="m-0 text-center text-white">Copyright &copy; Maathai Warehouse <?php echo date('Y'); ?></p>
       </div>
     </footer>
 

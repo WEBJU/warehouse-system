@@ -1,6 +1,6 @@
 <?php
 	// Root url for the site
-	define('ROOT_URL', 'http://localhost/biwott/inventory-management-system/');
+	define('ROOT_URL', '#');
 
 
 	// Database parameters

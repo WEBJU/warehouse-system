@@ -25,17 +25,18 @@
 				<?php switch ($_SESSION['role']):case 'Admin':  ?>
 				<a class="nav-link" id="v-pills-purchase-tab" data-toggle="pill" href="#v-pills-users" role="tab" aria-controls="v-pills-users" aria-selected="false">Users</a>
 				<a class="nav-link" id="v-pills-vendor-tab" data-toggle="pill" href="#v-pills-vendor" role="tab" aria-controls="v-pills-vendor" aria-selected="false">Vendor</a>
+				<a class="nav-link active" id="v-pills-item-tab" data-toggle="pill" href="#v-pills-item" role="tab" aria-controls="v-pills-item" aria-selected="true">Item</a>
+				<a class="nav-link" id="v-pills-purchase-tab" data-toggle="pill" href="#v-pills-purchase" role="tab" aria-controls="v-pills-purchase" aria-selected="false">Purchase</a>
 				<a class="nav-link" id="v-pills-search-tab" data-toggle="pill" href="#v-pills-search" role="tab" aria-controls="v-pills-search" aria-selected="false">Search</a>
 			 <a class="nav-link" id="v-pills-reports-tab" data-toggle="pill" href="#v-pills-reports" role="tab" aria-controls="v-pills-reports" aria-selected="false">Reports</a>
 				<?php break; ?>
 				<?php case 'Teller': ?>
 				<a class="nav-link" id="v-pills-customer-tab" data-toggle="pill" href="#v-pills-customer" role="tab" aria-controls="v-pills-customer" aria-selected="false">Customer</a>
-				<a class="nav-link" id="v-pills-sale-tab" data-toggle="pill" href="#v-pills-sale" role="tab" aria-controls="v-pills-sale" aria-selected="false">Sale</a>
+				<a class="nav-link" id="v-pills-sale-tab" data-toggle="pill" href="#v-pills-sale" role="tab" aria-controls="v-pills-sale" aria-selected="false">Take Order</a>
 				<a class="nav-link" id="v-pills-search-tab" data-toggle="pill" href="#v-pills-search" role="tab" aria-controls="v-pills-search" aria-selected="false">Search</a>
 				<?php break; ?>
 				<?php case 'Cashier': ?>
-				<a class="nav-link active" id="v-pills-item-tab" data-toggle="pill" href="#v-pills-item" role="tab" aria-controls="v-pills-item" aria-selected="true">Item</a>
-				<a class="nav-link" id="v-pills-purchase-tab" data-toggle="pill" href="#v-pills-purchase" role="tab" aria-controls="v-pills-purchase" aria-selected="false">Purchase</a>
+				<a class="nav-link" id="v-pills-payments-tab" data-toggle="pill" href="#v-pills-payments" role="tab" aria-controls="v-pills-payments" aria-selected="false">Approve Payments</a>
 				<?php break; ?>
 				<?php default: ?>
 					<a class="nav-link active" id="v-pills-item-tab" data-toggle="pill" href="#v-pills-item" role="tab" aria-controls="v-pills-item" aria-selected="true">No Tasks Assigned</a>
@@ -47,6 +48,8 @@
 		 <div class="col-lg-10">
 			<div class="tab-content" id="v-pills-tabContent">
 			  <div class="tab-pane fade show active" id="v-pills-item" role="tabpanel" aria-labelledby="v-pills-item-tab">
+
+					<?php if (($_SESSION['role']=='Admin' || $_SESSION['role']=='Teller')) {?>
 				<div class="card card-outline-secondary my-4">
 				  <div class="card-header">Item Details</div>
 				  <div class="card-body">
@@ -61,7 +64,7 @@
 
 					<!-- Tab panes for item details and image sections -->
 					<div class="tab-content">
-						<div id="itemDetailsTab" class="container-fluid tab-pane active">
+						<div id="itemDetailsTab" class="container-fluid tab-pane ">
 							<br>
 							<!-- Div to show the ajax message from validations/db submission -->
 							<div id="itemDetailsMessage"></div>
@@ -123,6 +126,7 @@
 							  <button type="reset" class="btn" id="itemClear">Clear</button>
 							</form>
 						</div>
+
 						<div id="itemImageTab" class="container-fluid tab-pane fade">
 							<br>
 							<div id="itemImageMessage"></div>
@@ -157,8 +161,40 @@
 					</div>
 				  </div>
 				</div>
+			<?php }else{ ?>
+					<div class="card card-outline-secondary my-4">
+						<div class="card-header">
+								<h4>Approve Payments</h4>
+						</div>
+						<div class="card-body">
+							<div class="paymentDetailsMessage"></div>
+							<form method="post">
+								<div class="row">
+									<?php
+										$myQuery="SELECT DISTINCT * FROM sale";
+										$stmt=$conn->prepare($myQuery);
+										$stmt->execute();
+										$data=$stmt->fetchAll();
+									 ?>
+										<div class="form-group col-md-6">
+											<select id="purchaseDetailsVendorName" name="purchaseDetailsVendorName" class="form-control chosenSelect">
+												<?php foreach ($data as $row):?>
+													<option value="<?= $row['customerID'] ?>"><?= $row['customerName']; ?></option>
+												<?php endforeach; ?>
+											</select>
+										</div>
+										<div class="form-group col-md-4">
+											<a href="receipts.php?customerID=<?php echo $row['customerID'];?>" name="viewPayments"  class="btn btn-info btn-block">View Payments</a>
+										</div>
+									</div>
+							</form>
+				  	</div>
+					</div>
+			<?php } ?>
 			  </div>
-			  <div class="tab-pane fade" id="v-pills-purchase" role="tabpanel" aria-labelledby="v-pills-purchase-tab">
+
+
+			  <div class="tab-pane fade " id="v-pills-purchase" role="tabpanel" aria-labelledby="v-pills-purchase-tab">
 				<div class="card card-outline-secondary my-4">
 				  <div class="card-header">Purchase Details</div>
 				  <div class="card-body">
@@ -300,6 +336,11 @@
 							<label for="userFullName">Full Name<span class="requiredIcon">*</span></label>
 							<input type="text" class="form-control" id="userFullName" name="userFullName" placeholder="">
 						</div>
+						<div class="form-group col-md-4">
+						 <label for="vendorDetailsVendorID">User ID</label>
+						 <input type="text" class="form-control invTooltip" id="userDetailsUserID" name="userDetailsUserID" title="This will be auto-generated when you add a new user" autocomplete="off">
+						 <div id="userDetailsUserIDSuggestionsDiv" class="customListDivWidth"></div>
+					 </div>
 						<div class="form-group col-md-8">
 						<label for="username">Username<span class="requiredIcon">*</span></label>
 						<input type="text" class="form-control" id="username" name="username">
@@ -318,7 +359,7 @@
 						</div>
 						</div>
 						<button type="button" id="addUser" name="addUser" class="btn btn-success">Add User</button>
-						<button type="button" id="updateUser" class="btn btn-primary">Update</button>
+						<button type="button" id="updateUserDetailsButton" class="btn btn-primary">Update</button>
 						<button type="button" id="deleteUserButton" class="btn btn-danger">Delete</button>
 						<button type="reset" class="btn">Clear</button>
 					 </form>
@@ -328,7 +369,7 @@
 
 			  <div class="tab-pane fade" id="v-pills-sale" role="tabpanel" aria-labelledby="v-pills-sale-tab">
 				<div class="card card-outline-secondary my-4">
-				  <div class="card-header">Sale Details</div>
+				  <div class="card-header">Order Details</div>
 				  <div class="card-body">
 					<div id="saleDetailsMessage"></div>
 					<form>
@@ -474,6 +515,9 @@
 				  <div class="card-header">Search Inventory<button id="searchTablesRefresh" name="searchTablesRefresh" class="btn btn-warning float-right btn-sm">Refresh</button></div>
 				  <div class="card-body">
 					<ul class="nav nav-tabs" role="tablist">
+						<?php if (isset($_SESSION['loggedIn']) && $_SESSION['loggedIn']==1) { ?>
+
+						<?php switch ($_SESSION['role']):case 'Admin':  ?>
 						<li class="nav-item">
 							<a class="nav-link active" data-toggle="tab" href="#itemSearchTab">Item</a>
 						</li>
@@ -489,6 +533,22 @@
 						<li class="nav-item">
 							<a class="nav-link" data-toggle="tab" href="#vendorSearchTab">Vendor</a>
 						</li>
+						<li class="nav-item">
+							<a class="nav-link" data-toggle="tab" href="#userSearchTab">User</a>
+						</li>
+						<?php break; ?>
+						<?php case 'Teller': ?>
+						<li class="nav-item">
+							<a class="nav-link active" data-toggle="tab" href="#itemSearchTab">Item</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" data-toggle="tab" href="#customerSearchTab">Customer</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" data-toggle="tab" href="#saleSearchTab">Orders</a>
+						</li>
+						<?php break; endswitch;?>
+					<?php } ?>
 					</ul>
 
 					<!-- Tab panes -->
@@ -519,6 +579,16 @@
 							<p>Use the grid below to search vendor details</p>
 							<div class="table-responsive" id="vendorDetailsTableDiv"></div>
 						</div>
+						<div id="userSearchTab" class="container-fluid tab-pane fade">
+							<br>
+							<p>Use the grid below to search user details</p>
+							<div class="table-responsive" id="vendorDetailsTableDiv"></div>
+						</div>
+						<!-- <div id="userSearchTab" class="container-fluid tab-pane fade">
+							<br>
+							<p>Use the grid below to search User details</p>
+							<div class="table-responsive" id="userDetailsTableDiv"></div>
+						</div> -->
 					</div>
 				  </div>
 				</div>
@@ -529,6 +599,8 @@
 				  <div class="card-header">Reports<button id="reportsTablesRefresh" name="reportsTablesRefresh" class="btn btn-warning float-right btn-sm">Refresh</button></div>
 				  <div class="card-body">
 					<ul class="nav nav-tabs" role="tablist">
+						<?php if (isset($_SESSION['loggedIn']) && $_SESSION['loggedIn']==1) { ?>
+						<?php switch ($_SESSION['role']):case 'Admin':  ?>
 						<li class="nav-item">
 							<a class="nav-link active" data-toggle="tab" href="#itemReportsTab">Item</a>
 						</li>
@@ -544,6 +616,27 @@
 						<li class="nav-item">
 							<a class="nav-link" data-toggle="tab" href="#vendorReportsTab">Vendor</a>
 						</li>
+						<li class="nav-item">
+							<a class="nav-link" data-toggle="tab" href="#userReportsTab">Users</a>
+						</li>
+						<?php break;  ?>
+						<?php case 'Teller': ?>
+						<li class="nav-item">
+							<a class="nav-link active" data-toggle="tab" href="#itemReportsTab">Item</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" data-toggle="tab" href="#customerReportsTab">Customer</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" data-toggle="tab" href="#saleReportsTab">Orders</a>
+						</li>
+						<?php break; ?>
+						<?php default: ?>
+						<li class="nav-item">
+							<a class="nav-link active" data-toggle="tab" href="#itemReportsTab">Item</a>
+						</li>
+						<?php break;endswitch; ?>
+					<?php } ?>
 					</ul>
 
 					<!-- Tab panes for reports sections -->
@@ -602,6 +695,11 @@
 							<br>
 							<p>Use the grid below to get reports for vendors</p>
 							<div class="table-responsive" id="vendorReportsTableDiv"></div>
+						</div>
+						<div id="userReportsTab" class="container-fluid tab-pane fade">
+							<br>
+							<p>Use the grid below to get reports for users</p>
+							<div class="table-responsive" id="userReportsTableDiv"></div>
 						</div>
 					</div>
 				  </div>

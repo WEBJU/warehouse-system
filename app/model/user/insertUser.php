@@ -16,7 +16,7 @@
 			// Start the insert process
 			$sql = 'INSERT INTO user(fullName, username, password,role,status) VALUES(:fullName, :username, :password,:role,:status)';
 			$stmt = $conn->prepare($sql);
-	  	$stmt->execute(['fullName' => $fullName, 'username' => $username, 'password' => $hashPassword,'role' => $role,'status'=>$status]);
+	  	$stmt->execute(['fullName' => $fullName, 'username' => $username, 'password' => $hashPassword,'status'=>$status,'role' => $role,]);
 
 				// code...
 				echo '<div class="alert alert-success"><button type="button" class="close" data-dismiss="alert">&times;</button>New User added to database Successfully</div>';
