@@ -177,9 +177,9 @@
 										$data=$stmt->fetchAll();
 									 ?>
 										<div class="form-group col-md-6">
-											<select id="purchaseDetailsVendorName" name="purchaseDetailsVendorName" class="form-control chosenSelect">
+											<select id="customer_name" name="customer_name" class="form-control chosenSelect">
 												<?php foreach ($data as $row):?>
-													<option value="<?= $row['customerID'] ?>"><?= $row['customerName']; ?></option>
+													<option value="<?=$row['customerID']?>"><?= $row['customerName']; ?></option>
 												<?php endforeach; ?>
 											</select>
 										</div>

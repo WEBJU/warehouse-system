@@ -2,7 +2,7 @@
 session_start();
 require_once('inc/config/constants.php');
 require_once('inc/config/db.php');
-$id=$_GET['customerID'];
+$id=$_GET['id'];
 $myQuery="SELECT * FROM sale WHERE customerID=:customerID";
 $stmt=$conn->prepare($myQuery);
 $stmt->bindParam(':customerID',$id);
@@ -19,7 +19,8 @@ foreach ($data as $row) {
   $total=$quantity * $unitPrice;
   if ($discount!=0) {
     // code...
-    $paid=$total*($discount / 100);
+    $dis=$total*($discount / 100);
+    $paid=$total-$dis;
   }else {
     $paid=$total;
   }

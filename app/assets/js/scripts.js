@@ -287,7 +287,6 @@ $(document).ready(function(){
 		reportsSaleTableCreator('saleReportsTableDiv', saleReportsSearchTableCreatorFile, 'saleReportsTable');
 	});
 
-
 	// Listen to item number text box in purchase details tab
 	$('#purchaseDetailsItemNumber').keyup(function(){
 		showSuggestions('purchaseDetailsItemNumber', showItemNumberForPurchaseTabFile, 'purchaseDetailsItemNumberSuggestionsDiv');
@@ -324,7 +323,27 @@ $(document).ready(function(){
 		$('#userDetailsUserIDSuggestionsList').fadeOut();
 		getUserDetailsToPopulate();
 	});
+	$('#customer_name').change(function(){
+		var selectedOption=$(this).val();
+		console.log(selectedOption);
+		var customer_id=$(this).find(':selected').val();
+		var url='receipts.php';
+		if(selectedOption != "") {
+			//$.redirect('receipts.php',{selectedOption});
+			window.location.href='receipts.php?id='+selectedOption;
+			// $().redirect('receipts.php', {'selectedOption': 'selectedOption'});
 
+			// var form=
+		}
+		// console.log(customer_id);
+		// $.ajax({
+		// 	url: '/receipts.php',
+		// 	method: 'POST',
+		// 	data: {
+		// 			customer_id:customer_id,
+		// 	}
+		});
+	// });
 	// Listen to CustomerID text box in sale details tab
 	$('#saleDetailsCustomerID').keyup(function(){
 		showSuggestions('saleDetailsCustomerID', showCustomerIDSuggestionsForSaleTabFile, 'saleDetailsCustomerIDSuggestionsDiv');
